@@ -1,7 +1,7 @@
 {
-  "name": "book-reading",
+  "name": "bolhs-bookreading",
   "version": "1.0.0",
-  "description": "Book Reading — Shared Reading Session Web Application for Book Clubs and Reading Groups",
+  "description": "BOLHS Book Reading — Shared Reading Session Web Application",
   "scripts": {
     "start": "npx serve . -p 3000",
     "dev": "npx serve . -p 3000"
