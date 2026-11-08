@@ -197,6 +197,132 @@ html, body {
   border-color: rgba(255, 255, 255, 0.25);
 }
 
+/* Sub-chapter Checklist Styles (True Education) */
+.subchapters-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.chapter-group-header {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #38bdf8;
+  padding: 6px 4px 4px 4px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  margin-top: 4px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.subchapter-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.subchapter-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateX(2px);
+}
+
+.subchapter-card.selected {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.45);
+  box-shadow: 0 2px 12px rgba(56, 189, 248, 0.15);
+}
+
+.subchapter-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subchapter-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.subchapter-card.selected .subchapter-radio {
+  border-color: #38bdf8;
+  background: #38bdf8;
+}
+
+.subchapter-card.selected .subchapter-radio::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #0f172a;
+}
+
+.subchapter-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.subchapter-card.selected .subchapter-name {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.subchapter-meta {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.subchapter-card.selected .subchapter-meta {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.custom-text-toggle-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.custom-text-toggle-btn:hover {
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.08);
+}
+
 /* Readers Checklist */
 .readers-checklist {
   display: flex;

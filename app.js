@@ -1,6 +1,6 @@
 /**
  * Book Reading — Web Application
- * Core Application Logic, Fixed Reader Roster & View Routing
+ * Core Application Logic, Fixed Reader Roster & True Education Sub-Chapters
  */
 
 // 11 Fixed Readers for BOLHS Book Reading sessions
@@ -20,7 +20,8 @@ const FIXED_READERS = [
 
 const DEFAULT_STATE = {
   currentView: "setup", // 'setup' (landing page) or 'reading'
-  title: "The Little Prince — Chapters 1 & 2",
+  selectedSubchapterId: "ted-14-1",
+  title: "True Education — Chapter 14: 14.1 Harmony of Nature and Revelation",
   rawText: "",
   paragraphs: [],
   currentIndex: 0,
@@ -44,13 +45,10 @@ let audioCtx = null;
 document.addEventListener("DOMContentLoaded", () => {
   loadFromLocalStorage();
 
-  // If no rawText loaded, initialize with default sample
+  // If no text or default, initialize with first True Education sub-chapter
   if (!state.rawText || state.rawText.trim().length === 0) {
-    if (typeof SAMPLE_TEXTS !== "undefined" && SAMPLE_TEXTS.length > 0) {
-      state.rawText = SAMPLE_TEXTS[0].text;
-      const parsed = parseRawText(state.rawText, true);
-      state.title = parsed.title;
-      state.paragraphs = parsed.paragraphs;
+    if (typeof TRUE_EDUCATION_SUBCHAPTERS !== "undefined" && TRUE_EDUCATION_SUBCHAPTERS.length > 0) {
+      selectSubchapter(state.selectedSubchapterId || TRUE_EDUCATION_SUBCHAPTERS[0].id, false);
     }
   }
 
@@ -58,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   syncFixedReaders();
 
   applySettings();
+  renderSetupSubchapters();
   initSetupView();
   switchView(state.currentView || "setup");
   setupEventListeners();
@@ -73,7 +72,6 @@ function syncFixedReaders() {
     return;
   }
 
-  // Ensure fixed readers are present and have colors
   const existingMap = new Map();
   state.readers.forEach(r => existingMap.set(r.name, r));
 
@@ -133,12 +131,77 @@ function switchView(viewName) {
   } else {
     if (readingView) readingView.classList.remove("active");
     if (setupView) setupView.classList.add("active");
-    // Ensure Presentation Mode is exited when in setup
     if (state.presentationMode) {
       togglePresentationMode(false);
     }
     renderSetupView();
   }
+}
+
+/* ========================================================
+   True Education Sub-Chapter Selection Logic
+   ======================================================== */
+function selectSubchapter(subId, shouldSave = true) {
+  if (typeof TRUE_EDUCATION_SUBCHAPTERS === "undefined") return;
+  const sub = TRUE_EDUCATION_SUBCHAPTERS.find(s => s.id === subId);
+  if (!sub) return;
+
+  state.selectedSubchapterId = sub.id;
+  state.title = `${sub.chapterTitle} — ${sub.subTitle}`;
+  state.rawText = sub.fullText;
+  state.paragraphs = [...sub.paragraphs];
+  state.currentIndex = 0;
+  state.readerOffset = 0;
+
+  // Update DOM inputs if present
+  const textarea = document.getElementById("setup-text-input");
+  const titleInput = document.getElementById("setup-title-input");
+  if (textarea) textarea.value = sub.fullText;
+  if (titleInput) titleInput.value = state.title;
+
+  if (shouldSave) saveToLocalStorage();
+
+  renderSetupSubchapters();
+  updateSetupStats();
+}
+
+function renderSetupSubchapters() {
+  const container = document.getElementById("subchapters-checklist-container");
+  if (!container || typeof TRUE_EDUCATION_SUBCHAPTERS === "undefined") return;
+
+  let currentChapter = null;
+  let html = "";
+
+  TRUE_EDUCATION_SUBCHAPTERS.forEach(sub => {
+    // Add group header when chapter changes
+    if (currentChapter !== sub.chapterNum) {
+      currentChapter = sub.chapterNum;
+      html += `
+        <div class="chapter-group-header">
+          <span>${escapeHtml(sub.chapterTitle)}</span>
+        </div>
+      `;
+    }
+
+    const isSelected = state.selectedSubchapterId === sub.id;
+    const estMins = Math.max(1, Math.ceil(sub.fullText.split(/\s+/).length / 130));
+
+    html += `
+      <div class="subchapter-card ${isSelected ? 'selected' : ''}" onclick="selectSubchapter('${sub.id}')">
+        <div class="subchapter-left">
+          <div class="subchapter-radio"></div>
+          <div>
+            <div class="subchapter-name">${escapeHtml(sub.subTitle)}</div>
+          </div>
+        </div>
+        <div class="subchapter-meta">
+          ${sub.paragraphCount} paras • ~${estMins}m
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
 }
 
 /* ========================================================
@@ -218,7 +281,6 @@ function skipCurrentReader() {
 function initSetupView() {
   const textarea = document.getElementById("setup-text-input");
   const titleInput = document.getElementById("setup-title-input");
-  const autoDetectCheckbox = document.getElementById("setup-auto-title-toggle");
 
   if (textarea) textarea.value = state.rawText || "";
   if (titleInput) titleInput.value = state.title || "";
@@ -226,13 +288,7 @@ function initSetupView() {
   if (textarea) {
     textarea.oninput = () => {
       state.rawText = textarea.value;
-      const autoDetect = autoDetectCheckbox ? autoDetectCheckbox.checked : true;
-      const parsed = parseRawText(state.rawText, autoDetect);
-      
-      if (autoDetect && titleInput) {
-        titleInput.value = parsed.title;
-        state.title = parsed.title;
-      }
+      const parsed = parseRawText(state.rawText, false);
       state.paragraphs = parsed.paragraphs;
       updateSetupStats();
       saveToLocalStorage();
@@ -248,6 +304,7 @@ function initSetupView() {
 }
 
 function renderSetupView() {
+  renderSetupSubchapters();
   renderSetupChecklist();
   updateSetupStats();
 }
@@ -267,7 +324,7 @@ function renderSetupChecklist() {
   let turnCounter = 1;
   let html = "";
 
-  state.readers.forEach((reader, index) => {
+  state.readers.forEach((reader) => {
     const isChecked = reader.active !== false;
     const turnLabel = isChecked ? `Turn #${turnCounter++}` : "Away";
 
@@ -383,24 +440,18 @@ function validateLaunchButton() {
   launchBtn.disabled = !hasText || !hasReaders;
 }
 
-function loadSampleToSetup(sampleId) {
-  if (typeof SAMPLE_TEXTS === "undefined") return;
-  const sample = SAMPLE_TEXTS.find(s => s.id === sampleId);
-  if (!sample) return;
+function toggleCustomTextPanel() {
+  const panel = document.getElementById("custom-text-accordion");
+  const toggleText = document.getElementById("custom-text-toggle-label");
+  if (!panel) return;
 
-  const textarea = document.getElementById("setup-text-input");
-  const titleInput = document.getElementById("setup-title-input");
-
-  state.rawText = sample.text;
-  const parsed = parseRawText(sample.text, true);
-  state.title = parsed.title;
-  state.paragraphs = parsed.paragraphs;
-
-  if (textarea) textarea.value = sample.text;
-  if (titleInput) titleInput.value = parsed.title;
-
-  saveToLocalStorage();
-  updateSetupStats();
+  if (panel.style.display === "none" || panel.style.display === "") {
+    panel.style.display = "block";
+    if (toggleText) toggleText.textContent = "Hide Text Editor ▲";
+  } else {
+    panel.style.display = "none";
+    if (toggleText) toggleText.textContent = "View / Edit Raw Text ▼";
+  }
 }
 
 function handleStartSession() {
@@ -409,8 +460,8 @@ function handleStartSession() {
 
   if (textarea && textarea.value.trim()) {
     state.rawText = textarea.value;
-    const parsed = parseRawText(textarea.value, true);
-    state.title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : parsed.title;
+    const parsed = parseRawText(textarea.value, false);
+    state.title = (titleInput && titleInput.value.trim()) ? titleInput.value.trim() : state.title;
     state.paragraphs = parsed.paragraphs;
   }
 
@@ -473,7 +524,7 @@ function renderParagraphs() {
     container.innerHTML = `
       <div style="text-align: center; padding: 60px 20px; color: #94a3b8;">
         <h3 style="font-size: 20px; margin-bottom: 8px; color: #f8fafc;">No text to read</h3>
-        <p style="margin-bottom: 20px;">Return to setup to paste text and assign readers.</p>
+        <p style="margin-bottom: 20px;">Return to setup to select a sub-chapter from True Education.</p>
         <button class="btn-primary" onclick="switchView('setup')">Go to Setup</button>
       </div>
     `;
@@ -715,7 +766,6 @@ function setupKeyboardShortcuts() {
       return;
     }
 
-    // Only handle reading navigation if in reading view
     if (state.currentView === "reading") {
       switch (e.code) {
         case "Space":

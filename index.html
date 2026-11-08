@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Book Reading — Shared Reading Session</title>
+  <title>Book Reading — True Education (E.G. White)</title>
   
   <!-- Google Fonts: Crimson Pro (Serif for reading) & Plus Jakarta Sans (Modern UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,70 +28,49 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
             <span>BOLHS Book Reading</span>
           </div>
-          <h1 class="setup-title">Shared Reading Session Setup</h1>
+          <h1 class="setup-title">True Education — Reading Session</h1>
           <p class="setup-subtitle">
-            Insert your reading text and tick the members present today. The app automatically assigns and cycles paragraphs in order during your Zoom call.
+            Select a sub-chapter from <em>True Education</em> by Ellen G. White and tick the attending members. The app automatically assigns paragraphs in rotation for your Zoom session.
           </p>
         </header>
 
         <!-- 2-Column Setup Grid -->
         <div class="setup-grid">
           
-          <!-- Column 1: Reading Text & Title -->
+          <!-- Column 1: True Education Sub-Chapters Checklist -->
           <div class="setup-card">
             <div class="setup-card-header">
               <div class="setup-card-title">
                 <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                <span>1. Reading Material</span>
+                <span>1. Select Sub-Chapter</span>
               </div>
-              <span style="font-size: 12px; color: #94a3b8;">Paste text or pick sample</span>
+              <span style="font-size: 12px; color: #38bdf8; font-weight: 600;">True Education (Ch. 14–15)</span>
             </div>
 
-            <!-- Quick Sample Picker -->
-            <div class="form-group">
-              <label class="form-label">
-                <span>Quick Classic Samples:</span>
-              </label>
-              <div class="samples-grid">
-                <button class="sample-btn" type="button" onclick="loadSampleToSetup('little-prince')">
-                  <div class="title">The Little Prince</div>
-                  <div class="author">A. de Saint-Exupéry</div>
-                </button>
-                <button class="sample-btn" type="button" onclick="loadSampleToSetup('pride-and-prejudice')">
-                  <div class="title">Pride & Prejudice</div>
-                  <div class="author">Jane Austen</div>
-                </button>
-                <button class="sample-btn" type="button" onclick="loadSampleToSetup('sherlock-holmes')">
-                  <div class="title">Sherlock Holmes</div>
-                  <div class="author">A. Conan Doyle</div>
-                </button>
+            <!-- Sub-Chapters Selection List -->
+            <div class="subchapters-container" id="subchapters-checklist-container">
+              <!-- Dynamically populated from TRUE_EDUCATION_SUBCHAPTERS -->
+            </div>
+
+            <!-- Expandable Raw Text Editor / Preview -->
+            <div style="margin-top: 6px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px;">
+              <button class="custom-text-toggle-btn" type="button" onclick="toggleCustomTextPanel()">
+                <span id="custom-text-toggle-label">View / Edit Raw Text ▼</span>
+              </button>
+
+              <div id="custom-text-accordion" style="display: none; margin-top: 10px;">
+                <div class="form-group" style="margin-bottom: 10px;">
+                  <label class="form-label" for="setup-title-input">Session Title:</label>
+                  <input type="text" class="form-input" id="setup-title-input" placeholder="Title...">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="setup-text-input">Paragraph Text:</label>
+                  <textarea class="form-textarea" id="setup-text-input" style="min-height: 140px; font-size: 13px;" placeholder="Text will appear here..."></textarea>
+                </div>
               </div>
             </div>
 
-            <!-- Paste Text Area -->
-            <div class="form-group">
-              <label class="form-label" for="setup-text-input">
-                <span>Reading Text:</span>
-                <span style="font-weight: 400; color: #94a3b8; font-size: 11.5px;">Separate paragraphs by empty lines</span>
-              </label>
-              <textarea class="form-textarea" id="setup-text-input" placeholder="Paste your chapter or reading text here...
-
-The first non-empty line will automatically become the Book or Chapter Title!
-
-Subsequent paragraphs will be highlighted one-by-one for each reader."></textarea>
-            </div>
-
-            <!-- Title Detection -->
-            <div class="form-group">
-              <div class="form-label">
-                <label for="setup-title-input">Chapter / Book Title:</label>
-                <label style="display: inline-flex; align-items: center; gap: 6px; font-weight: normal; font-size: 11.5px; color: #38bdf8; cursor: pointer;">
-                  <input type="checkbox" id="setup-auto-title-toggle" checked style="accent-color: #38bdf8;">
-                  <span>Auto-detect from 1st line</span>
-                </label>
-              </div>
-              <input type="text" class="form-input" id="setup-title-input" placeholder="Enter chapter or book title...">
-            </div>
           </div>
 
           <!-- Column 2: Attending Members Checklist -->
@@ -168,7 +147,7 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
             <span>Book Reading</span>
           </div>
 
-          <button class="btn-pill" onclick="switchView('setup')" title="Return to Setup to change text or attendees">
+          <button class="btn-pill" onclick="switchView('setup')" title="Return to Setup to change sub-chapter or attendees">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
             <span>Setup</span>
           </button>
@@ -229,7 +208,7 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
           
           <!-- Book Header -->
           <header class="book-header">
-            <h1 class="book-title" id="book-title">The Little Prince — Chapters 1 & 2</h1>
+            <h1 class="book-title" id="book-title">True Education</h1>
             
             <div class="book-meta">
               <div class="meta-pill" id="progress-badge">
@@ -324,7 +303,6 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
         </header>
 
         <div class="modal-body">
-          <!-- Font Size Slider -->
           <div class="form-group">
             <div class="form-label">
               <span>Text Size (Zoom Readability):</span>
@@ -333,7 +311,6 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
             <input type="range" id="setting-font-size" min="18" max="36" value="23" style="width: 100%; accent-color: #38bdf8;" oninput="updateSetting('fontSize', parseInt(this.value))">
           </div>
 
-          <!-- Column Width -->
           <div class="form-group">
             <label class="form-label" for="setting-container-width">Reading Column Width:</label>
             <select class="form-input" id="setting-container-width" onchange="updateSetting('containerWidth', parseInt(this.value))">
@@ -343,7 +320,6 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
             </select>
           </div>
 
-          <!-- Dimmed Context Opacity -->
           <div class="form-group">
             <div class="form-label">
               <span>Surrounding Paragraphs Opacity:</span>
@@ -352,7 +328,6 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
             <input type="range" id="setting-dimmed-opacity" min="0.3" max="0.8" step="0.05" value="0.5" style="width: 100%; accent-color: #38bdf8;" oninput="updateSetting('dimmedOpacity', parseFloat(this.value))">
           </div>
 
-          <!-- Audio Turn Chime -->
           <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between;">
             <div>
               <div style="font-weight: 600; font-size: 14px; color: #f8fafc;">Turn Chime Feedback</div>
@@ -419,6 +394,7 @@ Subsequent paragraphs will be highlighted one-by-one for each reader."></textare
   </div>
 
   <!-- Scripts -->
+  <script src="true_education_data.js"></script>
   <script src="samples.js"></script>
   <script src="app.js"></script>
 </body>
