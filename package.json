@@ -1,0 +1,18 @@
+{
+  "name": "book-reading",
+  "version": "1.0.0",
+  "description": "Book Reading — Shared Reading Session Web Application for Book Clubs and Reading Groups",
+  "scripts": {
+    "start": "npx serve . -p 3000",
+    "dev": "npx serve . -p 3000"
+  },
+  "keywords": [
+    "zoom",
+    "reading-session",
+    "book-club",
+    "shared-reading",
+    "screen-sharing"
+  ],
+  "author": "Antigravity Pair Programmer",
+  "license": "MIT"
+}
