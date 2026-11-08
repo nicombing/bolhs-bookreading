@@ -2,6 +2,8 @@
 
 A shared reading session web application designed specifically for virtual book clubs, literature circles, and reading groups meeting over Zoom, Google Meet, or Microsoft Teams.
 
+🌐 **Live URL**: [https://bolhs-bookreading.vercel.app](https://bolhs-bookreading.vercel.app)
+
 ---
 
 ## 🌟 Key Features
