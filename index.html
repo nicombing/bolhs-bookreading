@@ -16,288 +16,309 @@
 
   <div id="app-root">
 
-    <!-- Top Navigation Bar (Host Tools & Session Status) -->
-    <header class="top-bar" role="banner">
-      <div class="top-bar-left">
-        <div class="app-logo-badge" title="Book Reading">
-          <div class="icon-box">
-            <!-- Book / Screen Icon -->
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-            </svg>
-          </div>
-          <span>Book Reading</span>
-        </div>
-
-        <div class="session-title-preview" id="session-title-preview" title="Current Chapter Title">
-          Loading...
-        </div>
-      </div>
-
-      <!-- Center: Active Reader Turn Pill for Quick Glance -->
-      <div class="top-bar-center">
-        <div class="reader-turn-banner" id="top-active-reader" title="Current Active Reader">
-          <span class="reader-avatar-dot" style="background-color: #38bdf8;"></span>
-          <span>Preparing session...</span>
-        </div>
-      </div>
-
-      <!-- Right: Action Buttons -->
-      <div class="top-bar-right">
-        <!-- Load Text Button -->
-        <button class="btn-pill" onclick="openModal('paste-modal')" title="Paste text or load book (Key: T)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="12" y1="18" x2="12" y2="12"/>
-            <line x1="9" y1="15" x2="15" y2="15"/>
-          </svg>
-          <span>Text</span>
-        </button>
-
-        <!-- Readers Roster Button -->
-        <button class="btn-pill" onclick="openModal('readers-modal')" title="Manage Readers List (Key: R)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span>Readers</span>
-        </button>
-
-        <!-- Display / Font Settings -->
-        <button class="btn-icon" onclick="openModal('settings-modal')" title="Display & Font Settings">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-          </svg>
-        </button>
-
-        <!-- Presentation / Focus Mode Toggle -->
-        <button class="btn-icon" onclick="togglePresentationMode(true)" title="Zoom Presentation Mode (Hide HUD) [Key: H]">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-        </button>
-
-        <!-- Fullscreen Toggle -->
-        <button class="btn-icon" onclick="toggleFullscreen()" title="Fullscreen (Key: F)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-          </svg>
-        </button>
-
-        <!-- Shortcuts Help -->
-        <button class="btn-icon" onclick="openModal('shortcuts-modal')" title="Keyboard Shortcuts [Key: ?]">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <!-- Reading Canvas (Optimized for Zoom Screen Sharing) -->
-    <main class="reading-viewport">
-      <div class="reading-column">
+    <!-- ========================================================
+         VIEW 1: LANDING & SESSION SETUP
+         ======================================================== -->
+    <section class="view-panel active" id="view-setup" aria-label="Reading Session Setup">
+      <main class="setup-viewport">
         
-        <!-- Book / Chapter Title Header (Auto-detected from line 1) -->
-        <header class="book-header">
-          <h1 class="book-title" id="book-title">The Little Prince — Chapters 1 & 2</h1>
-          
-          <div class="book-meta">
-            <div class="meta-pill" id="progress-badge">
-              <span>Paragraph <strong>1</strong> of <strong>1</strong></span>
-            </div>
-            <div class="meta-pill" id="estimated-time-badge">
-              <span>~5 min reading</span>
-            </div>
-            <div class="meta-pill" style="color: #38bdf8;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              <span>Zoom Screen-Share Mode</span>
-            </div>
+        <!-- Hero Header -->
+        <header class="setup-hero">
+          <div class="setup-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>BOLHS Book Reading</span>
           </div>
+          <h1 class="setup-title">Shared Reading Session Setup</h1>
+          <p class="setup-subtitle">
+            Insert your reading text and tick the members present today. The app automatically assigns and cycles paragraphs in order during your Zoom call.
+          </p>
         </header>
 
-        <!-- Paragraphs Stream -->
-        <section class="paragraphs-flow" id="paragraphs-container" aria-live="polite">
-          <!-- Dynamically populated with active white card and dimmed context paragraphs -->
-        </section>
+        <!-- 2-Column Setup Grid -->
+        <div class="setup-grid">
+          
+          <!-- Column 1: Reading Text & Title -->
+          <div class="setup-card">
+            <div class="setup-card-header">
+              <div class="setup-card-title">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <span>1. Reading Material</span>
+              </div>
+              <span style="font-size: 12px; color: #94a3b8;">Paste text or pick sample</span>
+            </div>
 
-      </div>
-    </main>
+            <!-- Quick Sample Picker -->
+            <div class="form-group">
+              <label class="form-label">
+                <span>Quick Classic Samples:</span>
+              </label>
+              <div class="samples-grid">
+                <button class="sample-btn" type="button" onclick="loadSampleToSetup('little-prince')">
+                  <div class="title">The Little Prince</div>
+                  <div class="author">A. de Saint-Exupéry</div>
+                </button>
+                <button class="sample-btn" type="button" onclick="loadSampleToSetup('pride-and-prejudice')">
+                  <div class="title">Pride & Prejudice</div>
+                  <div class="author">Jane Austen</div>
+                </button>
+                <button class="sample-btn" type="button" onclick="loadSampleToSetup('sherlock-holmes')">
+                  <div class="title">Sherlock Holmes</div>
+                  <div class="author">A. Conan Doyle</div>
+                </button>
+              </div>
+            </div>
 
-    <!-- Floating Host Control Dock (Bottom Center) -->
-    <nav class="host-dock" role="navigation" aria-label="Host controls">
-      <!-- Previous Button -->
-      <button class="dock-btn" id="dock-prev-btn" onclick="prevParagraph()" title="Previous Paragraph (Key: ← or PageUp)">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-        <span>Prev</span>
-      </button>
+            <!-- Paste Text Area -->
+            <div class="form-group">
+              <label class="form-label" for="setup-text-input">
+                <span>Reading Text:</span>
+                <span style="font-weight: 400; color: #94a3b8; font-size: 11.5px;">Separate paragraphs by empty lines</span>
+              </label>
+              <textarea class="form-textarea" id="setup-text-input" placeholder="Paste your chapter or reading text here...
 
-      <!-- Scrubbable Progress Bar -->
-      <div class="dock-progress-area">
-        <div class="dock-progress-label">
-          <span>PROGRESS</span>
-          <span id="dock-counter">1 / 18</span>
+The first non-empty line will automatically become the Book or Chapter Title!
+
+Subsequent paragraphs will be highlighted one-by-one for each reader."></textarea>
+            </div>
+
+            <!-- Title Detection -->
+            <div class="form-group">
+              <div class="form-label">
+                <label for="setup-title-input">Chapter / Book Title:</label>
+                <label style="display: inline-flex; align-items: center; gap: 6px; font-weight: normal; font-size: 11.5px; color: #38bdf8; cursor: pointer;">
+                  <input type="checkbox" id="setup-auto-title-toggle" checked style="accent-color: #38bdf8;">
+                  <span>Auto-detect from 1st line</span>
+                </label>
+              </div>
+              <input type="text" class="form-input" id="setup-title-input" placeholder="Enter chapter or book title...">
+            </div>
+          </div>
+
+          <!-- Column 2: Attending Members Checklist -->
+          <div class="setup-card">
+            <div class="setup-card-header">
+              <div class="setup-card-title">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>2. Present Readers</span>
+              </div>
+              <span class="attendance-counter" id="attendance-count-badge">11 of 11 Present</span>
+            </div>
+
+            <!-- Attendance Action Buttons -->
+            <div class="attendance-actions">
+              <div style="display: flex; gap: 6px;">
+                <button class="btn-sm-action" type="button" onclick="selectAllReaders()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Select All</span>
+                </button>
+                <button class="btn-sm-action" type="button" onclick="deselectAllReaders()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Clear All</span>
+                </button>
+              </div>
+              <button class="btn-sm-action" type="button" onclick="shuffleReaderOrder()" title="Randomize the rotation order">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                <span>Shuffle Order</span>
+              </button>
+            </div>
+
+            <!-- Readers Checkbox List -->
+            <div class="readers-checklist" id="readers-checklist-container">
+              <!-- Dynamically populated with 11 fixed readers and checkboxes -->
+            </div>
+
+            <!-- Optional Guest Reader -->
+            <div style="display: flex; gap: 8px; margin-top: 6px;">
+              <input type="text" class="form-input" id="input-guest-reader" placeholder="Add guest reader name..." style="font-size: 13px; padding: 8px 12px;">
+              <button class="btn-sm-action" type="button" onclick="addGuestReader()" style="white-space: nowrap; padding: 0 14px;">
+                <span>+ Guest</span>
+              </button>
+            </div>
+          </div>
+
         </div>
-        <div class="progress-track" id="dock-progress-track" title="Click anywhere to jump to paragraph">
-          <div class="progress-fill" id="dock-progress-fill" style="width: 5%;"></div>
+
+        <!-- Launch Session CTA Bar -->
+        <div class="setup-cta-bar">
+          <button class="btn-launch-session" id="btn-start-reading" onclick="handleStartSession()">
+            <span>Start Reading Session</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          
+          <div class="setup-cta-stats" id="setup-stats-summary">
+            <!-- Dynamically populated stats -->
+          </div>
         </div>
-      </div>
 
-      <!-- Next Button (Primary Action) -->
-      <button class="dock-btn dock-btn-next" id="dock-next-btn" onclick="nextParagraph()" title="Advance to Next Paragraph & Reader (Key: Space or →)">
-        <span>Next Paragraph</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </main>
+    </section>
+
+    <!-- ========================================================
+         VIEW 2: ZOOM SHARED READING VIEW
+         ======================================================== -->
+    <section class="view-panel" id="view-reading" aria-label="Reading Session in Progress">
+      
+      <!-- Top Navigation Bar -->
+      <header class="top-bar" role="banner">
+        <div class="top-bar-left">
+          <div class="app-logo-badge" onclick="switchView('setup')" title="Back to Setup">
+            <div class="icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <span>Book Reading</span>
+          </div>
+
+          <button class="btn-pill" onclick="switchView('setup')" title="Return to Setup to change text or attendees">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>Setup</span>
+          </button>
+
+          <div class="session-title-preview" id="session-title-preview" title="Current Title">
+            Loading...
+          </div>
+        </div>
+
+        <!-- Center: Active Reader Turn Pill -->
+        <div class="top-bar-center">
+          <div class="reader-turn-banner" id="top-active-reader" title="Current Active Reader">
+            <span class="reader-avatar-dot" style="background-color: #38bdf8;"></span>
+            <span>Preparing session...</span>
+          </div>
+        </div>
+
+        <!-- Right: Action Buttons -->
+        <div class="top-bar-right">
+          <!-- Display Settings -->
+          <button class="btn-icon" onclick="openModal('settings-modal')" title="Display & Font Settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+
+          <!-- Presentation Mode Toggle -->
+          <button class="btn-icon" onclick="togglePresentationMode(true)" title="Zoom Presentation Mode (Hide HUD) [Key: H]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </button>
+
+          <!-- Fullscreen Toggle -->
+          <button class="btn-icon" onclick="toggleFullscreen()" title="Fullscreen (Key: F)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+          </button>
+
+          <!-- Shortcuts Help -->
+          <button class="btn-icon" onclick="openModal('shortcuts-modal')" title="Keyboard Shortcuts [Key: ?]">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Reading Canvas -->
+      <main class="reading-viewport">
+        <div class="reading-column">
+          
+          <!-- Book Header -->
+          <header class="book-header">
+            <h1 class="book-title" id="book-title">The Little Prince — Chapters 1 & 2</h1>
+            
+            <div class="book-meta">
+              <div class="meta-pill" id="progress-badge">
+                <span>Paragraph <strong>1</strong> of <strong>1</strong></span>
+              </div>
+              <div class="meta-pill" id="estimated-time-badge">
+                <span>~5 min reading</span>
+              </div>
+              <div class="meta-pill" style="color: #38bdf8;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <span>Zoom Screen Share Mode</span>
+              </div>
+            </div>
+          </header>
+
+          <!-- Paragraphs Stream -->
+          <section class="paragraphs-flow" id="paragraphs-container" aria-live="polite">
+            <!-- Dynamically populated -->
+          </section>
+
+        </div>
+      </main>
+
+      <!-- Floating Host Control Dock -->
+      <nav class="host-dock" role="navigation" aria-label="Host controls">
+        <!-- Back to Setup button -->
+        <button class="dock-btn" onclick="switchView('setup')" title="Back to Setup">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Setup</span>
+        </button>
+
+        <div class="dock-divider"></div>
+
+        <!-- Previous Button -->
+        <button class="dock-btn" id="dock-prev-btn" onclick="prevParagraph()" title="Previous Paragraph (Key: ← or PageUp)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          <span>Prev</span>
+        </button>
+
+        <!-- Scrubbable Progress Bar -->
+        <div class="dock-progress-area">
+          <div class="dock-progress-label">
+            <span>PROGRESS</span>
+            <span id="dock-counter">1 / 18</span>
+          </div>
+          <div class="progress-track" id="dock-progress-track" title="Click to jump to paragraph">
+            <div class="progress-fill" id="dock-progress-fill" style="width: 5%;"></div>
+          </div>
+        </div>
+
+        <!-- Next Button -->
+        <button class="dock-btn dock-btn-next" id="dock-next-btn" onclick="nextParagraph()" title="Advance to Next Paragraph & Reader (Key: Space or →)">
+          <span>Next</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+
+        <div class="dock-divider"></div>
+
+        <!-- Quick Skip Turn Button -->
+        <button class="dock-btn" onclick="skipCurrentReader()" title="Pass turn to next reader (Key: S)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          <span>Pass Turn</span>
+        </button>
+
+        <!-- Presentation Mode Button -->
+        <button class="dock-btn" onclick="togglePresentationMode(true)" title="Clean Screen for Zoom (Key: H)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </nav>
+
+      <!-- Floating Exit Presentation Mode Button -->
+      <button class="presentation-reveal-btn" id="presentation-reveal-btn" onclick="togglePresentationMode(false)" title="Restore Toolbar & Controls (or press H / Esc)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span>Show Controls [H]</span>
       </button>
 
-      <div class="dock-divider"></div>
-
-      <!-- Quick Skip Turn Button -->
-      <button class="dock-btn" onclick="skipCurrentReader()" title="Pass turn to next reader (Key: S)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-        <span>Pass Turn</span>
-      </button>
-
-      <!-- Hide Controls / Zoom Presenter Mode Button -->
-      <button class="dock-btn" onclick="togglePresentationMode(true)" title="Clean Screen for Zoom (Key: H)">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-      </button>
-    </nav>
-
-    <!-- Floating Exit Presentation Mode Button -->
-    <button class="presentation-reveal-btn" id="presentation-reveal-btn" onclick="togglePresentationMode(false)" title="Restore Toolbar & Controls (or press H / Esc)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      <span>Show Controls [H]</span>
-    </button>
+    </section>
 
     <!-- ========================================================
          MODALS
          ======================================================== -->
 
-    <!-- 1. Paste & Load Text Modal -->
-    <div class="modal-overlay" id="paste-modal" onclick="if(event.target === this) closeModal('paste-modal')">
-      <div class="modal-card">
-        <header class="modal-header">
-          <div class="modal-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span>Load Book or Chapter</span>
-          </div>
-          <button class="btn-icon" onclick="closeModal('paste-modal')" title="Close">✕</button>
-        </header>
-
-        <div class="modal-body">
-          <!-- Quick Sample Picker -->
-          <div class="form-group">
-            <label class="form-label">
-              <span>Quick Samples:</span>
-              <span style="font-weight: 400; font-size: 11.5px; color: #94a3b8;">Click to test immediately</span>
-            </label>
-            <div class="samples-grid">
-              <button class="sample-btn" onclick="loadSample('little-prince')">
-                <div class="title">The Little Prince</div>
-                <div class="author">A. de Saint-Exupéry</div>
-              </button>
-              <button class="sample-btn" onclick="loadSample('pride-and-prejudice')">
-                <div class="title">Pride and Prejudice</div>
-                <div class="author">Jane Austen</div>
-              </button>
-              <button class="sample-btn" onclick="loadSample('sherlock-holmes')">
-                <div class="title">Sherlock Holmes</div>
-                <div class="author">Arthur Conan Doyle</div>
-              </button>
-            </div>
-          </div>
-
-          <!-- Paste Raw Text -->
-          <div class="form-group">
-            <label class="form-label" for="paste-input-text">
-              <span>Paste Text Below:</span>
-              <span id="paste-preview-summary" style="color: #38bdf8; font-weight: 600;">0 paragraphs detected</span>
-            </label>
-            <textarea class="form-textarea" id="paste-input-text" placeholder="Paste your reading text here...
-First line will automatically become the Chapter / Book Title!
-Paragraphs separated by double line breaks."></textarea>
-          </div>
-
-          <!-- Title Detection Control -->
-          <div class="form-group">
-            <label class="form-label" for="detected-title-input">
-              <span style="display: inline-flex; align-items: center; gap: 6px;">
-                <input type="checkbox" id="auto-detect-title-toggle" checked style="accent-color: #38bdf8;">
-                <span>Auto-detect Title from First Line</span>
-              </span>
-            </label>
-            <input type="text" class="form-input" id="detected-title-input" placeholder="Title will appear here...">
-          </div>
-        </div>
-
-        <footer class="modal-footer">
-          <button class="btn-pill" onclick="closeModal('paste-modal')">Cancel</button>
-          <button class="btn-primary" id="btn-confirm-load-text">Start Reading Session</button>
-        </footer>
-      </div>
-    </div>
-
-    <!-- 2. Readers Roster Modal -->
-    <div class="modal-overlay" id="readers-modal" onclick="if(event.target === this) closeModal('readers-modal')">
-      <div class="modal-card">
-        <header class="modal-header">
-          <div class="modal-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span>Reader Roster & Rotation</span>
-          </div>
-          <button class="btn-icon" onclick="closeModal('readers-modal')" title="Close">✕</button>
-        </header>
-
-        <div class="modal-body">
-          <p style="font-size: 13.5px; color: #94a3b8; line-height: 1.5;">
-            The reading sequence cycles through active readers in order for each paragraph. You can toggle readers away temporarily or shuffle the order.
-          </p>
-
-          <!-- Add Reader Input -->
-          <div class="form-group">
-            <label class="form-label" for="input-new-reader-name">Add Reader (comma-separated for multiple):</label>
-            <div style="display: flex; gap: 8px;">
-              <input type="text" class="form-input" id="input-new-reader-name" placeholder="e.g. Alice, Bob, Clara...">
-              <button class="btn-primary" id="btn-add-reader" style="white-space: nowrap;">Add</button>
-            </div>
-          </div>
-
-          <!-- Readers Chips Container -->
-          <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="form-label">Current Readers in Rotation:</span>
-              <button class="btn-pill" onclick="shuffleReaders()" style="font-size: 12px; padding: 4px 10px;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
-                <span>Shuffle Order</span>
-              </button>
-            </div>
-            <div class="reader-chips-grid" id="readers-list-container">
-              <!-- Dynamically populated -->
-            </div>
-          </div>
-        </div>
-
-        <footer class="modal-footer">
-          <button class="btn-primary" onclick="closeModal('readers-modal')">Done</button>
-        </footer>
-      </div>
-    </div>
-
-    <!-- 3. Visual & Zoom Settings Modal -->
+    <!-- 1. Visual & Zoom Settings Modal -->
     <div class="modal-overlay" id="settings-modal" onclick="if(event.target === this) closeModal('settings-modal')">
       <div class="modal-card">
         <header class="modal-header">
           <div class="modal-title">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-            <span>Display & Zoom Optimization</span>
+            <span>Display & Zoom Settings</span>
           </div>
           <button class="btn-icon" onclick="closeModal('settings-modal')" title="Close">✕</button>
         </header>
@@ -331,7 +352,7 @@ Paragraphs separated by double line breaks."></textarea>
             <input type="range" id="setting-dimmed-opacity" min="0.3" max="0.8" step="0.05" value="0.5" style="width: 100%; accent-color: #38bdf8;" oninput="updateSetting('dimmedOpacity', parseFloat(this.value))">
           </div>
 
-          <!-- Audio Bell Chime -->
+          <!-- Audio Turn Chime -->
           <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between;">
             <div>
               <div style="font-weight: 600; font-size: 14px; color: #f8fafc;">Turn Chime Feedback</div>
@@ -347,7 +368,7 @@ Paragraphs separated by double line breaks."></textarea>
       </div>
     </div>
 
-    <!-- 4. Keyboard Shortcuts Cheatsheet Modal -->
+    <!-- 2. Keyboard Shortcuts Cheatsheet Modal -->
     <div class="modal-overlay" id="shortcuts-modal" onclick="if(event.target === this) closeModal('shortcuts-modal')">
       <div class="modal-card">
         <header class="modal-header">
@@ -378,14 +399,6 @@ Paragraphs separated by double line breaks."></textarea>
           <div class="shortcut-row">
             <span>Toggle Fullscreen</span>
             <div class="shortcut-keys"><span class="kbd-badge">F</span></div>
-          </div>
-          <div class="shortcut-row">
-            <span>Manage Readers List</span>
-            <div class="shortcut-keys"><span class="kbd-badge">R</span></div>
-          </div>
-          <div class="shortcut-row">
-            <span>Load / Edit Text</span>
-            <div class="shortcut-keys"><span class="kbd-badge">T</span></div>
           </div>
           <div class="shortcut-row">
             <span>Jump to Beginning / End</span>
