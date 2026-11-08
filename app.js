@@ -195,27 +195,38 @@ function updateCombinedSubchapters(shouldSave = true) {
   } else if (selected.length === 1) {
     const sub = selected[0];
     state.title = `${sub.chapterTitle} — ${sub.subTitle}`;
-    state.rawText = sub.fullText;
-    state.paragraphs = [...sub.paragraphs];
+    
+    const paras = [...sub.paragraphs];
+    if (paras.length > 0) {
+      // Attach section title directly to the first paragraph so it's read together
+      paras[0] = `=== ${sub.subTitle} ===\n` + paras[0];
+    }
+    state.rawText = paras.join('\n\n');
+    state.paragraphs = paras;
   } else {
     // Multiple sections selected
     const sameChapter = selected.every(s => s.chapterNum === selected[0].chapterNum);
     if (sameChapter) {
       const chTitle = selected[0].chapterTitle;
-      const subLabels = selected.map(s => s.subTitle.replace(/^\d+\.\d+\s*/, '')).join(', ');
-      state.title = `${chTitle} (${subLabels})`;
+      const subNumbers = selected.map(s => s.subTitle.match(/^\d+\.\d+/)?.[0] || s.subTitle).join(', ');
+      state.title = `${chTitle} (Sections ${subNumbers})`;
     } else {
       state.title = `True Education — Chapters 14 & 15 (${selected.length} Sections)`;
     }
 
     const allParas = [];
-    const textParts = [];
     selected.forEach(sub => {
-      textParts.push(`=== ${sub.subTitle} ===\n\n` + sub.paragraphs.join('\n\n'));
-      sub.paragraphs.forEach(p => allParas.push(p));
+      if (sub.paragraphs.length > 0) {
+        // Prepend section title directly to the first paragraph of each section
+        const firstWithHeading = `=== ${sub.subTitle} ===\n` + sub.paragraphs[0];
+        allParas.push(firstWithHeading);
+        for (let i = 1; i < sub.paragraphs.length; i++) {
+          allParas.push(sub.paragraphs[i]);
+        }
+      }
     });
 
-    state.rawText = textParts.join('\n\n');
+    state.rawText = allParas.join('\n\n');
     state.paragraphs = allParas;
   }
 
@@ -312,12 +323,20 @@ function parseRawText(rawText, autoDetectTitle = true) {
 
   const remainingText = lines.slice(contentStartIndex).join("\n").trim();
   const rawParagraphs = remainingText.split(/\n\s*\n+/);
-  const paragraphs = [];
+  const rawClean = rawParagraphs.map(b => b.trim()).filter(b => b.length > 0);
 
-  for (let block of rawParagraphs) {
-    const trimmed = block.trim();
-    if (trimmed.length > 0) {
-      paragraphs.push(trimmed);
+  // Combine any standalone headers with the subsequent paragraph
+  // so the title doesn't consume an entire reader's turn!
+  const paragraphs = [];
+  for (let i = 0; i < rawClean.length; i++) {
+    const block = rawClean[i];
+    const isHeaderOnly = /^(===|###|【|\d+\.\d+)/.test(block) || 
+      (block.length < 90 && /^(Chapter|Part|Section|\d+\.)/i.test(block) && !/[.!?]$/.test(block));
+
+    if (isHeaderOnly && i + 1 < rawClean.length) {
+      rawClean[i + 1] = block + "\n" + rawClean[i + 1];
+    } else {
+      paragraphs.push(block);
     }
   }
 
@@ -598,6 +617,22 @@ function renderReadingHeader() {
   }
 }
 
+function extractHeadingAndBody(rawPara) {
+  let heading = null;
+  let body = rawPara;
+
+  const match = rawPara.match(/^([=【#\s]*.*?[=】#\s]*)\n+([\s\S]*)$/);
+  if (match) {
+    const candidate = match[1].trim();
+    if (candidate.startsWith("===") || candidate.startsWith("【") || candidate.startsWith("###") || /^\d+\.\d+/.test(candidate)) {
+      heading = candidate.replace(/^[=【#\s]+|[=】#\s]+$/g, '').trim();
+      body = match[2].trim();
+    }
+  }
+
+  return { heading, body };
+}
+
 function renderParagraphs() {
   const container = document.getElementById("paragraphs-container");
   if (!container) return;
@@ -618,6 +653,14 @@ function renderParagraphs() {
     const isActive = idx === state.currentIndex;
     const reader = getReaderForParagraph(idx);
     const nextReader = getNextReaderForParagraph(idx);
+    const { heading, body } = extractHeadingAndBody(para);
+
+    const headingHtml = heading ? `
+      <div class="para-subchapter-pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <span>${escapeHtml(heading)}</span>
+      </div>
+    ` : "";
 
     if (isActive) {
       // High-contrast active white card
@@ -643,8 +686,10 @@ function renderParagraphs() {
             </div>
           </header>
 
+          ${headingHtml}
+
           <div class="para-content">
-            ${escapeHtml(para)}
+            ${escapeHtml(body)}
           </div>
         </article>
       `;
@@ -656,8 +701,11 @@ function renderParagraphs() {
             <span style="width: 7px; height: 7px; border-radius: 50%; background: ${reader.color}; display: inline-block;"></span>
             <span>${escapeHtml(reader.name)} • Paragraph ${idx + 1}</span>
           </div>
+
+          ${headingHtml}
+
           <div class="para-content">
-            ${escapeHtml(para)}
+            ${escapeHtml(body)}
           </div>
         </article>
       `;
