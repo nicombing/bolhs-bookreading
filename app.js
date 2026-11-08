@@ -20,7 +20,7 @@ const FIXED_READERS = [
 
 const DEFAULT_STATE = {
   currentView: "setup", // 'setup' (landing page) or 'reading'
-  selectedSubchapterId: "ted-14-1",
+  selectedSubchapterIds: ["ted-14-1"],
   title: "True Education — Chapter 14: 14.1 Harmony of Nature and Revelation",
   rawText: "",
   paragraphs: [],
@@ -45,10 +45,15 @@ let audioCtx = null;
 document.addEventListener("DOMContentLoaded", () => {
   loadFromLocalStorage();
 
-  // If no text or default, initialize with first True Education sub-chapter
-  if (!state.rawText || state.rawText.trim().length === 0) {
+  // Ensure selectedSubchapterIds is an array
+  if (!Array.isArray(state.selectedSubchapterIds)) {
+    state.selectedSubchapterIds = state.selectedSubchapterId ? [state.selectedSubchapterId] : ["ted-14-1"];
+  }
+
+  // If no text or default, initialize with selected True Education sub-chapters
+  if (!state.rawText || state.rawText.trim().length === 0 || !state.paragraphs || state.paragraphs.length === 0) {
     if (typeof TRUE_EDUCATION_SUBCHAPTERS !== "undefined" && TRUE_EDUCATION_SUBCHAPTERS.length > 0) {
-      selectSubchapter(state.selectedSubchapterId || TRUE_EDUCATION_SUBCHAPTERS[0].id, false);
+      updateCombinedSubchapters(false);
     }
   }
 
@@ -139,24 +144,87 @@ function switchView(viewName) {
 }
 
 /* ========================================================
-   True Education Sub-Chapter Selection Logic
+   True Education Sub-Chapter Multi-Selection Logic
    ======================================================== */
-function selectSubchapter(subId, shouldSave = true) {
-  if (typeof TRUE_EDUCATION_SUBCHAPTERS === "undefined") return;
-  const sub = TRUE_EDUCATION_SUBCHAPTERS.find(s => s.id === subId);
-  if (!sub) return;
+function toggleSubchapter(subId) {
+  if (!state.selectedSubchapterIds) state.selectedSubchapterIds = [];
+  
+  const idx = state.selectedSubchapterIds.indexOf(subId);
+  if (idx > -1) {
+    state.selectedSubchapterIds.splice(idx, 1);
+  } else {
+    state.selectedSubchapterIds.push(subId);
+  }
 
-  state.selectedSubchapterId = sub.id;
-  state.title = `${sub.chapterTitle} — ${sub.subTitle}`;
-  state.rawText = sub.fullText;
-  state.paragraphs = [...sub.paragraphs];
+  updateCombinedSubchapters(true);
+}
+
+function toggleChapterBatch(chapterNum) {
+  if (typeof TRUE_EDUCATION_SUBCHAPTERS === "undefined") return;
+  if (!state.selectedSubchapterIds) state.selectedSubchapterIds = [];
+
+  const chapterSubIds = TRUE_EDUCATION_SUBCHAPTERS.filter(s => s.chapterNum === chapterNum).map(s => s.id);
+  const allSelected = chapterSubIds.every(id => state.selectedSubchapterIds.includes(id));
+
+  if (allSelected) {
+    // Deselect all from this chapter
+    state.selectedSubchapterIds = state.selectedSubchapterIds.filter(id => !chapterSubIds.includes(id));
+  } else {
+    // Select all from this chapter
+    chapterSubIds.forEach(id => {
+      if (!state.selectedSubchapterIds.includes(id)) {
+        state.selectedSubchapterIds.push(id);
+      }
+    });
+  }
+
+  updateCombinedSubchapters(true);
+}
+
+function updateCombinedSubchapters(shouldSave = true) {
+  if (typeof TRUE_EDUCATION_SUBCHAPTERS === "undefined") return;
+  if (!state.selectedSubchapterIds) state.selectedSubchapterIds = [];
+
+  // Filter in exact book chronological order
+  const selected = TRUE_EDUCATION_SUBCHAPTERS.filter(s => state.selectedSubchapterIds.includes(s.id));
+
+  if (selected.length === 0) {
+    state.title = "True Education — No Section Selected";
+    state.rawText = "";
+    state.paragraphs = [];
+  } else if (selected.length === 1) {
+    const sub = selected[0];
+    state.title = `${sub.chapterTitle} — ${sub.subTitle}`;
+    state.rawText = sub.fullText;
+    state.paragraphs = [...sub.paragraphs];
+  } else {
+    // Multiple sections selected
+    const sameChapter = selected.every(s => s.chapterNum === selected[0].chapterNum);
+    if (sameChapter) {
+      const chTitle = selected[0].chapterTitle;
+      const subLabels = selected.map(s => s.subTitle.replace(/^\d+\.\d+\s*/, '')).join(', ');
+      state.title = `${chTitle} (${subLabels})`;
+    } else {
+      state.title = `True Education — Chapters 14 & 15 (${selected.length} Sections)`;
+    }
+
+    const allParas = [];
+    const textParts = [];
+    selected.forEach(sub => {
+      textParts.push(`=== ${sub.subTitle} ===\n\n` + sub.paragraphs.join('\n\n'));
+      sub.paragraphs.forEach(p => allParas.push(p));
+    });
+
+    state.rawText = textParts.join('\n\n');
+    state.paragraphs = allParas;
+  }
+
   state.currentIndex = 0;
   state.readerOffset = 0;
 
-  // Update DOM inputs if present
   const textarea = document.getElementById("setup-text-input");
   const titleInput = document.getElementById("setup-title-input");
-  if (textarea) textarea.value = sub.fullText;
+  if (textarea) textarea.value = state.rawText;
   if (titleInput) titleInput.value = state.title;
 
   if (shouldSave) saveToLocalStorage();
@@ -167,7 +235,15 @@ function selectSubchapter(subId, shouldSave = true) {
 
 function renderSetupSubchapters() {
   const container = document.getElementById("subchapters-checklist-container");
+  const countBadge = document.getElementById("subchapters-count-badge");
   if (!container || typeof TRUE_EDUCATION_SUBCHAPTERS === "undefined") return;
+
+  const totalSections = TRUE_EDUCATION_SUBCHAPTERS.length;
+  const selectedCount = (state.selectedSubchapterIds || []).length;
+
+  if (countBadge) {
+    countBadge.textContent = `${selectedCount} of ${totalSections} Selected`;
+  }
 
   let currentChapter = null;
   let html = "";
@@ -176,20 +252,26 @@ function renderSetupSubchapters() {
     // Add group header when chapter changes
     if (currentChapter !== sub.chapterNum) {
       currentChapter = sub.chapterNum;
+      const chapterSubIds = TRUE_EDUCATION_SUBCHAPTERS.filter(s => s.chapterNum === currentChapter).map(s => s.id);
+      const isChapterAllSelected = chapterSubIds.every(id => (state.selectedSubchapterIds || []).includes(id));
+
       html += `
         <div class="chapter-group-header">
           <span>${escapeHtml(sub.chapterTitle)}</span>
+          <button class="subchapter-btn-group-sm" type="button" onclick="toggleChapterBatch(${currentChapter})">
+            ${isChapterAllSelected ? 'Deselect Ch ' + currentChapter : 'Select All Ch ' + currentChapter}
+          </button>
         </div>
       `;
     }
 
-    const isSelected = state.selectedSubchapterId === sub.id;
+    const isSelected = (state.selectedSubchapterIds || []).includes(sub.id);
     const estMins = Math.max(1, Math.ceil(sub.fullText.split(/\s+/).length / 130));
 
     html += `
-      <div class="subchapter-card ${isSelected ? 'selected' : ''}" onclick="selectSubchapter('${sub.id}')">
+      <div class="subchapter-card ${isSelected ? 'selected' : ''}" onclick="toggleSubchapter('${sub.id}')">
         <div class="subchapter-left">
-          <div class="subchapter-radio"></div>
+          <input type="checkbox" class="subchapter-checkbox" ${isSelected ? 'checked' : ''} onclick="event.stopPropagation(); toggleSubchapter('${sub.id}')">
           <div>
             <div class="subchapter-name">${escapeHtml(sub.subTitle)}</div>
           </div>

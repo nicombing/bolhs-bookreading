@@ -253,28 +253,39 @@ html, body {
   gap: 12px;
 }
 
-.subchapter-radio {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+.subchapter-checkbox {
+  width: 19px;
+  height: 19px;
+  border-radius: 5px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
+  accent-color: #38bdf8;
+  cursor: pointer;
 }
 
-.subchapter-card.selected .subchapter-radio {
+.subchapter-card.selected .subchapter-checkbox {
   border-color: #38bdf8;
   background: #38bdf8;
 }
 
-.subchapter-card.selected .subchapter-radio::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #0f172a;
+.subchapter-btn-group-sm {
+  background: none;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.subchapter-btn-group-sm:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #ffffff;
 }
 
 .subchapter-name {
